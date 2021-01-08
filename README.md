@@ -5,7 +5,7 @@ Auto utsusemi addon to maintain shadows based on buffs active and main/sub jobs.
 
 //ut and //utsu are the addon's commands
 
-//ut <command> - On/Off/Help being the command
+//ut "command" - On/Off/Help being the command
   
 //ut on - toggles the addon to start 
 
