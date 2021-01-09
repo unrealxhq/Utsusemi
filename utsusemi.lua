@@ -35,7 +35,6 @@ windower.register_event('addon command', function (command,...)
 	elseif command == "cast_speed" and args[1] and tonumber(args[1]) then
 		cast_speed = tonumber(args[1])
 		log('Cast Speed set to '..cast_speed) 
-		log('Cast time set to '..ichi_cast_time)
 		local cmd = args[1]     
 	else
 		log('Error: Unknown command')
@@ -69,7 +68,7 @@ end)
 end	)]]
 function utsu_check()
 	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .2)
-	ni_cast_time = (cast_speed * 0.015) * (100 - .1)
+	ni_cast_time = (cast_speed * 0.015) * (100 - .1) 
     if not enabled then return end
     local player = windower.ffxi.get_player()--Self explanitory 
     local job = player.main_job--Self explanitory 
