@@ -12,3 +12,5 @@ Auto utsusemi addon to maintain shadows based on buffs active and main/sub jobs.
 //ut off toggles the addon off
 
 //ut help - lists the commands
+
+//ut cast_speed # to change cast speed
