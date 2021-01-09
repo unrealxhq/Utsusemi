@@ -1,18 +1,22 @@
 _addon.name = 'Utsusemi'
 _addon.author = 'Shiraj'
 _addon.commands = {'utsu','ut'}
-_addon.version = '0.0.1'
+_addon.version = '0.5.6'
 
 require('luau')
 res = require('resources')
-
+--packets = require('packets')
 local player = windower.ffxi.get_player()
 enabled = false
 local utsuDelay = 1.5
-latency = .5
+latency = .7
 lastUseCheck = os.clock()
-
+cast_speed = 0.2
+	--[[if id == 0x01A = then 
+		(os.clock() + utsuDelay)
+	end	]]
 name_index = {}
+log('Default cast speed set to '..cast_speed)
 language = windower.ffxi.get_info().language:lower()
 --Command function, list of commands
 windower.register_event('addon command', function (command,...)
@@ -26,8 +30,13 @@ windower.register_event('addon command', function (command,...)
 		log('Auto Utsusemi: OFF')
     elseif command == 'help' then
 		log('[on|off] Enable / Disable Utsusemi')
+		log('cast_speed # to equal your fast cast. capped fast cast would be 0.2, 0% fast cast would be 1')
 		log('It is strongly recommended that you use the Itemizer addon alongside this one')
-        local cmd = args[1]     
+	elseif command == "cast_speed" and args[1] and tonumber(args[1]) then
+		cast_speed = tonumber(args[1])
+		log('Cast Speed set to '..cast_speed) 
+		log('Cast time set to '..ichi_cast_time)
+		local cmd = args[1]     
 	else
 		log('Error: Unknown command')
 	end
@@ -47,16 +56,20 @@ windower.register_event('addon command', function (command,...)
 			end
 		end
 	end
-	
-
-   
 end)
-
-function cancel(id)
-	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
-end
-
+windower.register_event('job change', function()
+    enabled = false
+end)
+--[[windower.register_event('incoming chunk', function(id,data)
+	if id == 0x01A then 
+		if (utsu_check - lastUseCheck) >= utsuDelay then
+			lastUseCheck = utsuDelay - latency
+		end
+	end	
+end	)]]
 function utsu_check()
+	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .2)
+	ni_cast_time = (cast_speed * 0.015) * (100 - .1)
     if not enabled then return end
     local player = windower.ffxi.get_player()--Self explanitory 
     local job = player.main_job--Self explanitory 
@@ -67,21 +80,19 @@ function utsu_check()
 			if player.main_job == 'NIN' then 
 				if spell_recasts[340] < latency then 
 					windower.chat.input('/ma "Utsusemi: San" <me>')
-					windower.send_command('cancel Copy Image')
 				elseif spell_recasts[339] < latency then 
 					windower.chat.input('/ma "Utsusemi: Ni" <me>')
-					windower.send_command('cancel Copy Image')
+					windower.send_command('@wait'..ni_cast_time..';cancel Copy Image')
 				elseif spell_recasts[338] < latency then 
 					windower.chat.input('/ma "Utsusemi: Ichi" <me>')
-					windower.send_command('cancel Copy Image')
+					windower.send_command('@wait'..ichi_cast_time..';cancel Copy Image')
 				end    
 			elseif player.sub_job == 'NIN' then 
 				if spell_recasts[339] < latency then 
 					windower.chat.input('/ma "Utsusemi: Ni" <me>')
-					windower.send_command('cancel Copy Image')
 				elseif spell_recasts[338] < latency then 
 					windower.chat.input('/ma "Utsusemi: Ichi" <me>')
-					windower.send_command('cancel Copy Image')
+					windower.send_command('@wait'..ichi_cast_time..';cancel Copy Image')
 				end    
 			else
 				windower.add_to_chat(205,'You do not have access to Utsusemi')
@@ -89,4 +100,7 @@ function utsu_check()
 		end 
 	end 
 end	
-utsu_check:loop(.2)
+utsu_check:loop(.8)
+function cancel(id)
+	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
+end
