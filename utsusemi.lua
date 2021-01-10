@@ -1,7 +1,7 @@
 _addon.name = 'Utsusemi'
 _addon.author = 'Shiraj'
 _addon.commands = {'utsu','ut'}
-_addon.version = '1.2.0'
+_addon.version = '1.2.1'
 
 require('luau')
 res = require('resources')
@@ -55,7 +55,11 @@ windower.register_event('addon command', function (command,...)
 	end
 end)
 windower.register_event('job change', function()
-    enabled = false
+	local player = windower.ffxi.get_player()--Self explanitory 
+	if player.main_job or player.sub_job ~= 'NIN' then
+		log('You do not have access to Utsusemi')
+	end	
+	   enabled = false
 end)
 function utsu_check()
 	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .2)
@@ -84,8 +88,6 @@ function utsu_check()
 					windower.chat.input('/ma "Utsusemi: Ichi" <me>')
 					windower.send_command('@wait'..ichi_cast_time..';cancel Copy Image')
 				end    
-			else
-				windower.add_to_chat(205,'You do not have access to Utsusemi')
 			end
 		end 
 	end 
@@ -101,4 +103,5 @@ windower.register_event('zone change',function(id)
 			log('In town, Auto Utsusemi turned off')
 		end
 end )
+
 
