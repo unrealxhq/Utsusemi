@@ -1,20 +1,18 @@
 _addon.name = 'Utsusemi'
 _addon.author = 'Shiraj'
 _addon.commands = {'utsu','ut'}
-_addon.version = '0.5.6'
+_addon.version = '1.2.0'
 
 require('luau')
 res = require('resources')
---packets = require('packets')
 local player = windower.ffxi.get_player()
 enabled = false
 local utsuDelay = 1.5
 latency = .7
 lastUseCheck = os.clock()
 cast_speed = 0.2
-	--[[if id == 0x01A = then 
-		(os.clock() + utsuDelay)
-	end	]]
+
+
 name_index = {}
 log('Default cast speed set to '..cast_speed)
 language = windower.ffxi.get_info().language:lower()
@@ -59,17 +57,10 @@ end)
 windower.register_event('job change', function()
     enabled = false
 end)
---[[windower.register_event('incoming chunk', function(id,data)
-	if id == 0x01A then 
-		if (utsu_check - lastUseCheck) >= utsuDelay then
-			lastUseCheck = utsuDelay - latency
-		end
-	end	
-end	)]]
 function utsu_check()
 	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .2)
-	ni_cast_time = (cast_speed * 0.015) * (100 - .1) 
-    if not enabled then return end
+	ni_cast_time = (cast_speed * 0.015) * (100 - .1)    
+	if not enabled then return end
     local player = windower.ffxi.get_player()--Self explanitory 
     local job = player.main_job--Self explanitory 
     local utsu_buffs = S(player.buffs):intersection(S{444, 445, 446})--Stores Copy image: 2,3 and 4+ as buffs
@@ -103,3 +94,11 @@ utsu_check:loop(.8)
 function cancel(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
+windower.register_event('zone change',function(id)
+	local info = windower.ffxi.get_info()
+		if S{50,53,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,256,257,280,281}:contains(info.zone) and enabled == true then
+			enabled = false
+			log('In town, Auto Utsusemi turned off')
+		end
+end )
+
