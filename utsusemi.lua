@@ -12,7 +12,6 @@ latency = .7
 lastUseCheck = os.clock()
 cast_speed = 0.2
 
-
 name_index = {}
 log('Default cast speed set to '..cast_speed)
 language = windower.ffxi.get_info().language:lower()
@@ -56,9 +55,16 @@ windower.register_event('addon command', function (command,...)
 end)
 windower.register_event('job change', function()
 	local player = windower.ffxi.get_player()--Self explanitory 
-	if player.main_job or player.sub_job ~= 'NIN' then
-		log('You do not have access to Utsusemi')
-	end	
+		if player.main_job ~= 'NIN' then
+			log('Main job set to '..player.main_job)
+		else 
+			log('You have Access to Utsusemi')
+		end	
+		if player.sub_job ~= 'NIN' then
+			log('Sub job set to '..player.sub_job)
+		else 
+			log('You have Access to Utsusemi')
+		end	
 	   enabled = false
 end)
 function utsu_check()
@@ -103,5 +109,3 @@ windower.register_event('zone change',function(id)
 			log('In town, Auto Utsusemi turned off')
 		end
 end )
-
-
