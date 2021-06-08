@@ -68,8 +68,8 @@ windower.register_event('job change', function()
 	   enabled = false
 end)
 function utsu_check()
-	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .2)
-	ni_cast_time = (cast_speed * 0.015) * (100 - .1)    
+	ichi_cast_time = (cast_speed * 0.04) * ( 100 - .225)
+	ni_cast_time = (cast_speed * 0.015) * (100 - .125)    
 	if not enabled then return end
     local player = windower.ffxi.get_player()--Self explanitory 
     local job = player.main_job--Self explanitory 
